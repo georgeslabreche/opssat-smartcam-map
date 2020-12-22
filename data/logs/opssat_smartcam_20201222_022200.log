@@ -1,0 +1,213 @@
+2020-12-22 02:22:00,569 INFO Raw image file compression enabled: fapec.
+2020-12-22 02:22:00,580 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-22 02:22:36,937 INFO Acquired image: /home/exp1000/img_msec_1608603723961_2.png
+2020-12-22 02:22:36,938 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608603723961_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603723961_2_thumbnail.jpeg
+2020-12-22 02:22:39,280 INFO Labeling the image using the 'default' model.
+2020-12-22 02:22:39,281 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608603723961_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603723961_2_input.jpeg
+2020-12-22 02:22:41,084 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608603723961_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-22 02:22:42,715 INFO Model prediction results: {"bad": 0.021474, "earth": 0.954794, "edge": 0.023733}
+2020-12-22 02:22:42,717 INFO Labeling the image as 'earth'.
+2020-12-22 02:22:42,726 INFO Keeping the image.
+2020-12-22 02:22:42,727 INFO Compressing the raw image.
+2020-12-22 02:22:42,728 INFO Running command to compress image: /home/exp100/fapec -q -chunk 512K -mt 1 -dtype 16 -cillic 2048 1944 1 x10 12 4 -lev 5 -ow -o /home/exp1000/toGround/earth/img_msec_1608603723961_2.fapec /home/exp1000/img_msec_1608603723961_2.ims_rgb >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+FAPEC Archiver - 20.0.0 Beta r2280 (2020-11-15)
+(c) 2013-2020 DAPCOM Data Services S.L. - http://www.dapcom.es
+32/32 bit LE Restricted license for:
+ ESA OPS-SAT
+
+Compressing 1 file into /home/exp1000/toGround/earth/img_msec_1608603723961_2.fapec...
+ [1/1] /home/exp1000/img_msec_1608603723961_2.ims_rgb (7.6 MB)...
+
+Done: 7.6 MB compressed to 0.8 MB (ratio 9.9823) in 0.7 seconds (10.7 MB/s)
+2020-12-22 02:22:43,552 INFO Wait 1 seconds...
+2020-12-22 02:22:44,557 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-22 02:23:27,278 INFO Acquired image: /home/exp1000/img_msec_1608603767961_2.png
+2020-12-22 02:23:27,279 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608603767961_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603767961_2_thumbnail.jpeg
+2020-12-22 02:23:29,600 INFO Labeling the image using the 'default' model.
+2020-12-22 02:23:29,602 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608603767961_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603767961_2_input.jpeg
+2020-12-22 02:23:31,485 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608603767961_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-22 02:23:32,519 INFO Model prediction results: {"bad": 0.026845, "earth": 0.955327, "edge": 0.017828}
+2020-12-22 02:23:32,521 INFO Labeling the image as 'earth'.
+2020-12-22 02:23:32,522 INFO Keeping the image.
+2020-12-22 02:23:32,523 INFO Compressing the raw image.
+2020-12-22 02:23:32,524 INFO Running command to compress image: /home/exp100/fapec -q -chunk 512K -mt 1 -dtype 16 -cillic 2048 1944 1 x10 12 4 -lev 5 -ow -o /home/exp1000/toGround/earth/img_msec_1608603767961_2.fapec /home/exp1000/img_msec_1608603767961_2.ims_rgb >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+FAPEC Archiver - 20.0.0 Beta r2280 (2020-11-15)
+(c) 2013-2020 DAPCOM Data Services S.L. - http://www.dapcom.es
+32/32 bit LE Restricted license for:
+ ESA OPS-SAT
+
+Compressing 1 file into /home/exp1000/toGround/earth/img_msec_1608603767961_2.fapec...
+ [1/1] /home/exp1000/img_msec_1608603767961_2.ims_rgb (7.6 MB)...
+
+Done: 7.6 MB compressed to 0.8 MB (ratio 10.0011) in 0.7 seconds (10.8 MB/s)
+2020-12-22 02:23:35,801 INFO Wait 1 seconds...
+2020-12-22 02:23:36,807 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-22 02:24:17,814 INFO Acquired image: /home/exp1000/img_msec_1608603820201_2.png
+2020-12-22 02:24:17,815 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608603820201_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603820201_2_thumbnail.jpeg
+2020-12-22 02:24:20,169 INFO Labeling the image using the 'default' model.
+2020-12-22 02:24:20,171 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608603820201_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603820201_2_input.jpeg
+2020-12-22 02:24:22,045 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608603820201_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-22 02:24:23,066 INFO Model prediction results: {"bad": 0.017417, "earth": 0.951943, "edge": 0.030640}
+2020-12-22 02:24:23,068 INFO Labeling the image as 'earth'.
+2020-12-22 02:24:23,069 INFO Keeping the image.
+2020-12-22 02:24:23,070 INFO Compressing the raw image.
+2020-12-22 02:24:23,072 INFO Running command to compress image: /home/exp100/fapec -q -chunk 512K -mt 1 -dtype 16 -cillic 2048 1944 1 x10 12 4 -lev 5 -ow -o /home/exp1000/toGround/earth/img_msec_1608603820201_2.fapec /home/exp1000/img_msec_1608603820201_2.ims_rgb >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+FAPEC Archiver - 20.0.0 Beta r2280 (2020-11-15)
+(c) 2013-2020 DAPCOM Data Services S.L. - http://www.dapcom.es
+32/32 bit LE Restricted license for:
+ ESA OPS-SAT
+
+Compressing 1 file into /home/exp1000/toGround/earth/img_msec_1608603820201_2.fapec...
+ [1/1] /home/exp1000/img_msec_1608603820201_2.ims_rgb (7.6 MB)...
+
+Done: 7.6 MB compressed to 0.8 MB (ratio 9.9578) in 0.7 seconds (10.6 MB/s)
+2020-12-22 02:24:23,926 INFO Wait 1 seconds...
+2020-12-22 02:24:24,932 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-22 02:24:56,297 INFO Acquired image: /home/exp1000/img_msec_1608603868361_2.png
+2020-12-22 02:24:56,299 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608603868361_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603868361_2_thumbnail.jpeg
+2020-12-22 02:24:59,637 INFO Labeling the image using the 'default' model.
+2020-12-22 02:24:59,638 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608603868361_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603868361_2_input.jpeg
+2020-12-22 02:25:01,396 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608603868361_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-22 02:25:02,421 INFO Model prediction results: {"bad": 0.085487, "earth": 0.880608, "edge": 0.033906}
+2020-12-22 02:25:02,423 INFO Labeling the image as 'earth'.
+2020-12-22 02:25:02,425 INFO Keeping the image.
+2020-12-22 02:25:02,426 INFO Compressing the raw image.
+2020-12-22 02:25:02,427 INFO Running command to compress image: /home/exp100/fapec -q -chunk 512K -mt 1 -dtype 16 -cillic 2048 1944 1 x10 12 4 -lev 5 -ow -o /home/exp1000/toGround/earth/img_msec_1608603868361_2.fapec /home/exp1000/img_msec_1608603868361_2.ims_rgb >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+FAPEC Archiver - 20.0.0 Beta r2280 (2020-11-15)
+(c) 2013-2020 DAPCOM Data Services S.L. - http://www.dapcom.es
+32/32 bit LE Restricted license for:
+ ESA OPS-SAT
+
+Compressing 1 file into /home/exp1000/toGround/earth/img_msec_1608603868361_2.fapec...
+ [1/1] /home/exp1000/img_msec_1608603868361_2.ims_rgb (7.6 MB)...
+
+Done: 7.6 MB compressed to 0.8 MB (ratio 9.9113) in 0.7 seconds (10.6 MB/s)
+2020-12-22 02:25:03,379 INFO Wait 1 seconds...
+2020-12-22 02:25:04,384 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-22 02:25:40,298 INFO Acquired image: /home/exp1000/img_msec_1608603907800_2.png
+2020-12-22 02:25:40,300 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608603907800_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603907800_2_thumbnail.jpeg
+2020-12-22 02:25:42,521 INFO Labeling the image using the 'default' model.
+2020-12-22 02:25:42,522 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608603907800_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608603907800_2_input.jpeg
+2020-12-22 02:25:44,415 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608603907800_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-22 02:25:46,143 INFO Model prediction results: {"bad": 0.018228, "earth": 0.957935, "edge": 0.023837}
+2020-12-22 02:25:46,145 INFO Labeling the image as 'earth'.
+2020-12-22 02:25:46,146 INFO Keeping the image.
+2020-12-22 02:25:46,148 INFO Compressing the raw image.
+2020-12-22 02:25:46,149 INFO Running command to compress image: /home/exp100/fapec -q -chunk 512K -mt 1 -dtype 16 -cillic 2048 1944 1 x10 12 4 -lev 5 -ow -o /home/exp1000/toGround/earth/img_msec_1608603907800_2.fapec /home/exp1000/img_msec_1608603907800_2.ims_rgb >> /home/exp1000/logs/opssat_smartcam_20201222_022200.log 2>&1
+
+FAPEC Archiver - 20.0.0 Beta r2280 (2020-11-15)
+(c) 2013-2020 DAPCOM Data Services S.L. - http://www.dapcom.es
+32/32 bit LE Restricted license for:
+ ESA OPS-SAT
+
+Compressing 1 file into /home/exp1000/toGround/earth/img_msec_1608603907800_2.fapec...
+ [1/1] /home/exp1000/img_msec_1608603907800_2.ims_rgb (7.6 MB)...
+
+Done: 7.6 MB compressed to 0.8 MB (ratio 9.6273) in 0.7 seconds (10.9 MB/s)
+2020-12-22 02:25:46,927 INFO Image acquisition loop completed.
+2020-12-22 02:25:46,939 INFO Disk usage:
+Filesystem                Size      Used Available Use% Mounted on
+/dev/root                 3.8G      1.7G      1.8G  49% /
+devtmpfs                492.9M         0    492.9M   0% /dev
+tmpfs                   501.4M         0    501.4M   0% /dev/shm
+tmpfs                   501.4M    356.0K    501.0M   0% /run
+tmpfs                   501.4M         0    501.4M   0% /sys/fs/cgroup
+tmpfs                   501.4M    812.0K    500.6M   0% /tmp
+tmpfs                   501.4M         0    501.4M   0% /var/volatile
+tmpfs                   100.3M         0    100.3M   0% /run/user/0
+
+2020-12-22 02:25:46,951 INFO Tarring 5 file(s) for downlink.
