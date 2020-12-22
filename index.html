@@ -4,33 +4,168 @@
     <title>OPS-SAT SmartCam Map</title>
     <meta charset="utf-8" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" integrity="sha512-rKFvwjvE4liWPlFnvH4ZhRDfNZ9FOpdkD/BU5gAIA3VS3vOQrQ5BjKgbO3kxebKhHdHcNUHLqxQYSoxee9UwgA==" crossorigin="anonymous"></script>
+    <link 
+        rel="stylesheet" 
+        href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
 
-    <script type='text/javascript'>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+        html, body, #map {
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
 
-    var infobox = null;
+    <!-- jQuery -->
+    <script
+        src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha256-4+XzXVhsDmqanXGHaHvgh1gMQKX40OUvDEBTu8JcmNs="
+        crossorigin="anonymous"></script>
+    </script>
 
-    function GetMap()
-    {
-        var map = new Microsoft.Maps.Map('#myMap');
+    <!-- PapaParse -->
+    <script 
+        src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" 
+        integrity="sha512-rKFvwjvE4liWPlFnvH4ZhRDfNZ9FOpdkD/BU5gAIA3VS3vOQrQ5BjKgbO3kxebKhHdHcNUHLqxQYSoxee9UwgA=="
+        crossorigin="anonymous"></script>
 
-        //Create an infobox at the center of the map but don't show it.
-        infobox = new Microsoft.Maps.Infobox(map.getCenter(), {
-            visible: false
+    <!-- Leaflet -->
+    <script 
+        src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin="">
+    </script>
+
+    <script>
+        var CAMERA_START_TIMESTAMPS = ["20201222_022200", "20201221_221200"];
+        var selectedDate = "all";
+        var markerDictionary = {}
+
+        // Tile layer options.
+        // More here: https://leaflet-extras.github.io/leaflet-providers/preview/
+        var tileLayer_Stamen_TonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}{r}.{ext}', {
+            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            subdomains: 'abcd',
+            minZoom: 0,
+            maxZoom: 20,
+            ext: 'png'
         });
 
-        // Assign the infobox to a map instance.
-        infobox.setMap(map);
-
-        map.setView({
-            zoom: 1
+        var tileLayer_Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
         });
 
-        var expTimestamps = ["20201221_221200", "20201222_022200"];
+        var tileLayer_Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+        });
 
-        for(var i=0; i < expTimestamps.length; i++){
 
-            var dataLogUrl = "https://georgeslabreche.github.io/opssat-smartcam-map/data/logs/opssat_smartcam_metadata_" + expTimestamps[i] + ".csv";
+        var tileLayers = [
+            tileLayer_Stamen_TonerLite, // Minimal
+            tileLayer_Esri_WorldStreetMap, // Standard
+            tileLayer_Esri_WorldImagery, // Satellite
+        ];
+
+        // Select Standard by default.
+        var selectedMapTileLayerIndex = 1;
+
+        // Map object.
+        var map = L.map('map').setView([30, 0], 3);
+
+        // Add defailt map tile layer to the map.
+        tileLayers[selectedMapTileLayerIndex].addTo(map)
+
+        // Build a tile layer selection control.
+        var tileLayerControl = L.control({position: 'topright'});
+
+        tileLayerControl.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info legend');
+            div.innerHTML = '<select class="map-tile-select">' +
+                '<option value="0">Minimal</option>' +
+                '<option value="1" selected>Standard</option>' +
+                '<option value="2">Satellite</option>' +
+            '</select>';
+            div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+
+            return div;
+        };
+
+        // Add a tile layer selection control.
+        tileLayerControl.addTo(map);
+
+        // Build acquisition datetime layer selection control.
+        var dateSelectControl = L.control({position: 'topright'});
+
+         // Build acquisition datetime selection control.
+        dateSelectControl.onAdd = function (map) {
+            var div = L.DomUtil.create('div', 'info legend');
+
+            selectHtml = '<select class="date-select"><option value="-1">All</option>';
+
+            for(var i=0; i < CAMERA_START_TIMESTAMPS.length; i++)
+            {
+                // Camera start time, e.g. 20201222_022200
+                var cst = CAMERA_START_TIMESTAMPS[i];
+
+                // Grab datetime values.
+                var YYYY = cst.substring(0, 4);
+                var MM = cst.substring(4, 6);
+                var DD = cst.substring(6, 8);
+                var HH = cst.substring(9, 11);
+                var mm = cst.substring(11, 13);
+                var ss = cst.substring(13, 15);
+
+                // Datetime string format to YYYY-MM-DD HH:mm:ss.
+                var datetimeString = YYYY + "-" + MM + "-" + DD + " " + HH + ":" + mm + ":" + ss;
+
+                // Create select option.
+                selectHtml = selectHtml + '<option value="' + i + ' ">' + datetimeString + '</option>'
+            }
+
+            div.innerHTML = selectHtml + '</select>';
+            div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
+
+            return div;
+        };
+
+        // Add datetime selection control.
+        dateSelectControl.addTo(map);
+
+        var markerIconGood = L.icon({
+            iconUrl: "markers/blue.png",
+            iconSize:     [50, 50], // size of the icon
+            iconAnchor:   [25, 25], // point of the icon which will correspond to marker's location
+        });
+
+        var markerIconBad = L.icon({
+            iconUrl: "markers/yellow.png",
+            iconSize:     [50, 50], // size of the icon
+            iconAnchor:   [25, 25], // point of the icon which will correspond to marker's location
+        });
+
+
+        // Assign each marker group a layer id.
+        // This is so that we can toggle show/hide markers for selected datetimes.
+        var markerGroupId = 0;
+
+        // Track hidden marker groups.
+        var markerGroupsHidden = [];
+
+        for(var i=0; i < CAMERA_START_TIMESTAMPS.length; i++){
+
+            // The camara image acquisitio start time.
+            var cameraStartTimestamp = CAMERA_START_TIMESTAMPS[i]
+
+            // CSV file URL.
+            var dataLogUrl = "https://georgeslabreche.github.io/opssat-smartcam-map/data/logs/opssat_smartcam_metadata_" + cameraStartTimestamp + ".csv";
 
             // Read CSV file
             Papa.parse(dataLogUrl, {
@@ -39,65 +174,105 @@
                 skipEmptyLines: true,
                 complete: function(results) {
 
+                    // Marker array.
+                    var markers = []
+
                     for(var j=0; j < results.data.length; j++){
+
+                        // Get dat afor the current image.
                         var imgData = results.data[j];
 
+                        // Was this image kept?
                         var imgKept = imgData.keep === 'True' ? true : false;
 
-                        var pinLocation = new Microsoft.Maps.Location(imgData.lat, imgData.lng)
-                        var pinColor = imgKept == true ? 'blue' : 'red';
+                        // Define marker icon based on whether or not the image was kept.
+                        var markerIcon = imgKept == true ? markerIconGood : markerIconBad;
 
-                        var pin = new Microsoft.Maps.Pushpin(pinLocation, {
-                            color: pinColor
-                        });
+                        // Create marker and place on map.
+                        var marker = L.marker([imgData.lat, imgData.lng],  {icon: markerIcon, dateGroup: cameraStartTimestamp})
 
-                        // Store some metadata with the pushpin.
-                        pin.metadata = {
-                            htmlContent: "<div style='background-color:white;'>" +
+                        // If image was kept then build a marker popup that will show the image.
+                        if(imgKept == true){
+                            var markerHtmlContent = "<div>" +
                                 "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/earth/" + imgData.filename + "_thumbnail.jpeg'></img>" +
-                                "<div style='padding: 10px;'>" + 
+                                "<div>" + 
                                     "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
                                     "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
                                     "<div><strong>Filename:</strong> " + imgData.filename + "</div>" +
                                 "</div>" +
                             "</div>"
-                        };
 
-                        if(imgKept == true){
-                            //Add a click event handler to the pushpin.
-                            Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
+                            marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
                         }
-                        
 
-                        // Add the pushpin to the map.
-                        map.entities.push(pin);
+                        markers.push(marker);
+
                     }
+
+                    // Create the marker grour layer and assign it an id.
+                    var markerGroup = L.layerGroup(markers)
+                    markerGroup.markerGroupId = markerGroupId;
+                    markerGroupId++;
+
+                    // Add the group to the map.
+                    markerGroup.addTo(map);
                 }
             })
         }
 
-        Microsoft.Maps.Events.addHandler(map, 'click', function () { infobox.setOptions({visible: false}); });
-    }
+        // Show image when clicking on a marker.
+        $('.map-tile-select').change(function(){
+            // Remove current tile layer.
+            map.removeLayer(tileLayers[selectedMapTileLayerIndex]);
 
-    function pushpinClicked(e) {
-        //Make sure the infobox has metadata to display.
-        if (e.target.metadata) {
-            //Set the infobox options with the metadata of the pushpin.
-            infobox.setOptions({
-                location: e.target.getLocation(),
-                htmlContent: e.target.metadata.htmlContent,
-                visible: true
-            });
-        }
-    }
+            // Add selectred tile layer.
+            selectedMapTileLayerIndex = $(".map-tile-select option:selected").attr("value");
+            map.addLayer(tileLayers[selectedMapTileLayerIndex]);
+        });
+
+
+        // Only show images for selected day
+        $('.date-select').change(function(){
+            // The marker group we want to show.
+            var markerGroupIdToShow = $(".date-select option:selected").attr("value");
+
+            // Re-introduce all marker group previously removed.
+            for(var i=0; i < markerGroupsHidden.length; i++){
+                map.addLayer(markerGroupsHidden[i]);
+            }
+
+            // Reset the array tracking the hidden marker group.
+            markerGroupsHidden = []
+
+            // If we are not displaying all marker groups.
+            if(markerGroupIdToShow != -1){
+
+                // Remove the marker groups that we don't want to show.
+                map.eachLayer(function (layer) { 
+                    if(layer instanceof L.LayerGroup && layer.markerGroupId != undefined){
+
+                        if(layer.markerGroupId != markerGroupIdToShow){
+                            markerGroupsHidden.push(layer);
+                            map.removeLayer(layer);  
+                        }
+                    } 
+                });
+            }
+        });
+
+        
+
+        // Make sure that the popup is big enough to fit the image.
+        // See: https://stackoverflow.com/a/38172374/4030804
+        document.querySelector(".leaflet-popup-pane").addEventListener("load", function (event) {
+            var tagName = event.target.tagName,
+                popup = map._popup; // Currently open popup, if any.
+
+            if (tagName === "img" && popup) {
+                popup.update();
+            }
+        }, true); // Capture the load event, because it does not bubble.
+
     </script>
-
-    <!-- Reference to the Bing Maps SDK -->
-    <script type='text/javascript'
-            src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnOjldcT7zelC8o_02aFheMv6LnFzsx0ogqDjxy77x8pvTVOBBFFN8TQ0GMXLiUu' 
-            async defer></script>
-</head>
-<body>
-    <div id="myMap" style="position:relative;width:100%;height:100%;"></div>
 </body>
 </html>
