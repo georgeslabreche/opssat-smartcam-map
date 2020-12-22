@@ -53,7 +53,14 @@
 
                         // Store some metadata with the pushpin.
                         pin.metadata = {
-                            htmlContent: "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/earth/" + imgData.filename + "_thumbnail.jpeg'></img>"
+                            htmlContent: "<div style='background-color:white;'>" +
+                                "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/earth/" + imgData.filename + "_thumbnail.jpeg'></img>" +
+                                "<div style='padding: 10px;'>" + 
+                                    "<div><strong>Timestamp:</strong> " + imgData.acq_dt + "</div>" +
+                                    "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
+                                    "<div><strong>Filename:</strong> " + imgData.filename + "</div>" +
+                                "</div>" +
+                            "</div>"
                         };
 
                         if(imgKept == true){
