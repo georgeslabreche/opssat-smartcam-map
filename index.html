@@ -6,21 +6,89 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" integrity="sha512-rKFvwjvE4liWPlFnvH4ZhRDfNZ9FOpdkD/BU5gAIA3VS3vOQrQ5BjKgbO3kxebKhHdHcNUHLqxQYSoxee9UwgA==" crossorigin="anonymous"></script>
 
-    <!-- Reference to the Bing Maps SDK -->
-    <script type='text/javascript'
-            src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnOjldcT7zelC8o_02aFheMv6LnFzsx0ogqDjxy77x8pvTVOBBFFN8TQ0GMXLiUu' 
-            async defer></script>
-    
     <script type='text/javascript'>
+
+    var infobox = null;
+
     function GetMap()
     {
         var map = new Microsoft.Maps.Map('#myMap');
 
-        //Add your post map load code here.
+        //Create an infobox at the center of the map but don't show it.
+        infobox = new Microsoft.Maps.Infobox(map.getCenter(), {
+            visible: false
+        });
 
-        // Read CSV file
+        // Assign the infobox to a map instance.
+        infobox.setMap(map);
+
+        map.setView({
+            zoom: 1
+        });
+
+        var expTimestamps = ["20201221_221200", "20201222_022200"];
+
+        for(var i=0; i < expTimestamps.length; i++){
+
+            var dataLogUrl = "https://georgeslabreche.github.io/opssat-smartcam-map/data/logs/opssat_smartcam_metadata_" + expTimestamps[i] + ".csv";
+
+            // Read CSV file
+            Papa.parse(dataLogUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+
+                    for(var j=0; j < results.data.length; j++){
+                        var imgData = results.data[j];
+
+                        var imgKept = imgData.keep === 'True' ? true : false;
+
+                        var pinLocation = new Microsoft.Maps.Location(imgData.lat, imgData.lng)
+                        var pinColor = imgKept == true ? 'blue' : 'red';
+
+                        var pin = new Microsoft.Maps.Pushpin(pinLocation, {
+                            color: pinColor
+                        });
+
+                        // Store some metadata with the pushpin.
+                        pin.metadata = {
+                            htmlContent: "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/earth/" + imgData.filename + "_thumbnail.jpeg'></img>"
+                        };
+
+                        if(imgKept == true){
+                            //Add a click event handler to the pushpin.
+                            Microsoft.Maps.Events.addHandler(pin, 'click', pushpinClicked);
+                        }
+                        
+
+                        // Add the pushpin to the map.
+                        map.entities.push(pin);
+                    }
+                }
+            })
+        }
+
+        Microsoft.Maps.Events.addHandler(map, 'click', function () { infobox.setOptions({visible: false}); });
+    }
+
+    function pushpinClicked(e) {
+        //Make sure the infobox has metadata to display.
+        if (e.target.metadata) {
+            //Set the infobox options with the metadata of the pushpin.
+            infobox.setOptions({
+                location: e.target.getLocation(),
+                htmlContent: e.target.metadata.htmlContent,
+                visible: true
+            });
+        }
     }
     </script>
+
+    <!-- Reference to the Bing Maps SDK -->
+    <script type='text/javascript'
+            src='https://www.bing.com/api/maps/mapcontrol?callback=GetMap&key=AnOjldcT7zelC8o_02aFheMv6LnFzsx0ogqDjxy77x8pvTVOBBFFN8TQ0GMXLiUu' 
+            async defer></script>
 </head>
 <body>
     <div id="myMap" style="position:relative;width:100%;height:100%;"></div>
