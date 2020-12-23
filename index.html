@@ -19,10 +19,6 @@
             height: 100%;
             width: 100%;
         }
-        .leaflet-popup-tip {
-            width: 0px;
-            height: 0px;
-        }
     </style>
 </head>
 <body>
@@ -198,12 +194,21 @@
 
                         // If image was kept then build a marker popup that will show the image.
                         if(imgKept == true){
-                            var markerHtmlContent = "<div style='width:620; height:620'>" +
+                            var markerHtmlContent = "<div style='width:620px; height:635px'>" +
                                 "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/earth/" + imgData.filename + "_thumbnail.jpeg'></img>" +
                                 "<div>" + 
                                     "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
                                     "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
                                     "<div><strong>Filename:</strong> " + imgData.filename + "</div>" +
+                                "</div>" +
+                            "</div>"
+
+                            marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
+                        }else{
+                            var markerHtmlContent = "<div style='width:360px; height:35px'>" +
+                                "<div>" + 
+                                    "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
+                                    "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
                                 "</div>" +
                             "</div>"
 
