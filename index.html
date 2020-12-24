@@ -68,6 +68,12 @@
         var tileLayer_Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
         });
+        
+        var tileLayer_Esri_DeLorme = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Specialty/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Copyright: &copy;2012 DeLorme',
+            minZoom: 1,
+            maxZoom: 11
+        });
 
         var tileLayer_Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
@@ -77,7 +83,8 @@
         var tileLayers = [
             tileLayer_Stamen_TonerLite, // Minimal
             tileLayer_Esri_WorldStreetMap, // Standard
-            tileLayer_Esri_WorldImagery, // Satellite
+            tileLayer_Esri_DeLorme, // Topographic
+            tileLayer_Esri_WorldImagery // Satellite
         ];
 
         // Select Standard by default.
@@ -97,7 +104,8 @@
             div.innerHTML = '<select class="map-tile-select">' +
                 '<option value="0">Minimal</option>' +
                 '<option value="1" selected>Standard</option>' +
-                '<option value="2">Satellite</option>' +
+                '<option value="2">Topographic</option>' +
+                '<option value="3">Satellite</option>' +
             '</select>';
             div.firstChild.onmousedown = div.firstChild.ondblclick = L.DomEvent.stopPropagation;
 
