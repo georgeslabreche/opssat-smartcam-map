@@ -46,8 +46,13 @@
     </script>
 
     <script>
-        var CAMERA_START_TIMESTAMPS = ["20201222_022200", "20201221_221200"];
+        // The camera runs to process. Order in descending start time.
+        var CAMERA_START_TIMESTAMPS = ["20201223_210401", "20201223_200500", "20201222_022200", "20201221_221200"];
+        
+        // Default camera start time 
         var selectedDate = "all";
+        
+        // Categorize spacecraft position markers by their experiment start time.
         var markerDictionary = {}
 
         // Tile layer options.
@@ -195,7 +200,7 @@
                         // If image was kept then build a marker popup that will show the image.
                         if(imgKept == true){
                             var markerHtmlContent = "<div style='width:620px; height:635px'>" +
-                                "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/earth/" + imgData.filename + "_thumbnail.jpeg'></img>" +
+                                "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/" + imgData.label + "/" + imgData.filename + "_thumbnail.jpeg'></img>" +
                                 "<div>" + 
                                     "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
                                     "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
