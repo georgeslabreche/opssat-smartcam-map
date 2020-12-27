@@ -1,0 +1,165 @@
+2020-12-25 09:34:59,714 INFO Raw image file compression disabled.
+2020-12-25 09:34:59,724 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201225_093459.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-25 09:35:23,094 INFO Acquired image: /home/exp1000/img_msec_1608888903130_2.png
+2020-12-25 09:35:23,095 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608888903130_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608888903130_2_thumbnail.jpeg
+2020-12-25 09:35:25,373 INFO Labeling the image using the 'default' model.
+2020-12-25 09:35:25,374 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608888903130_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608888903130_2_input.jpeg
+2020-12-25 09:35:27,248 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608888903130_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-25 09:35:28,255 INFO Model prediction results: {"bad": 0.007922, "earth": 0.981058, "edge": 0.011020}
+2020-12-25 09:35:28,257 INFO Labeling the image as 'earth'.
+2020-12-25 09:35:28,260 INFO Keeping the image.
+2020-12-25 09:35:28,339 INFO Wait 0 seconds...
+2020-12-25 09:35:28,343 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201225_093459.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-25 09:35:54,930 INFO Acquired image: /home/exp1000/img_msec_1608888931768_2.png
+2020-12-25 09:35:54,932 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608888931768_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608888931768_2_thumbnail.jpeg
+2020-12-25 09:35:57,170 INFO Labeling the image using the 'default' model.
+2020-12-25 09:35:57,171 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608888931768_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608888931768_2_input.jpeg
+2020-12-25 09:35:59,059 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608888931768_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-25 09:36:00,053 INFO Model prediction results: {"bad": 0.409775, "earth": 0.556725, "edge": 0.033501}
+2020-12-25 09:36:00,055 INFO Insufficient prediction confidence level to label the image (the threshold is currently set to 0.75).
+2020-12-25 09:36:00,059 INFO Ditching the image.
+2020-12-25 09:36:00,081 INFO Removed file: /home/exp1000/img_msec_1608888931768_2.ims_rgb
+2020-12-25 09:36:00,100 INFO Removed file: /home/exp1000/img_msec_1608888931768_2.png
+2020-12-25 09:36:00,102 INFO Removed file: /home/exp1000/img_msec_1608888931768_2_input.jpeg
+2020-12-25 09:36:00,104 INFO Removed file: /home/exp1000/img_msec_1608888931768_2_thumbnail.jpeg
+2020-12-25 09:36:00,105 INFO Wait 5 seconds...
+2020-12-25 09:36:05,114 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201225_093459.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-25 09:36:25,655 INFO Acquired image: /home/exp1000/img_msec_1608888968488_2.png
+2020-12-25 09:36:25,656 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608888968488_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608888968488_2_thumbnail.jpeg
+2020-12-25 09:36:27,854 INFO Labeling the image using the 'default' model.
+2020-12-25 09:36:27,857 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608888968488_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608888968488_2_input.jpeg
+2020-12-25 09:36:29,585 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608888968488_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-25 09:36:30,560 INFO Model prediction results: {"bad": 0.102658, "earth": 0.026815, "edge": 0.870528}
+2020-12-25 09:36:30,562 INFO Labeling the image as 'edge'.
+2020-12-25 09:36:30,563 INFO Keeping the image.
+2020-12-25 09:36:30,634 INFO Wait 0 seconds...
+2020-12-25 09:36:30,638 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201225_093459.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-25 09:36:46,392 INFO Acquired image: /home/exp1000/img_msec_1608888994089_2.png
+2020-12-25 09:36:46,393 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608888994089_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608888994089_2_thumbnail.jpeg
+2020-12-25 09:36:48,259 INFO Labeling the image using the 'default' model.
+2020-12-25 09:36:48,260 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608888994089_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608888994089_2_input.jpeg
+2020-12-25 09:36:49,736 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608888994089_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-25 09:36:50,700 INFO Model prediction results: {"bad": 0.882336, "earth": 0.054177, "edge": 0.063487}
+2020-12-25 09:36:50,702 INFO Labeling the image as 'bad'.
+2020-12-25 09:36:50,703 INFO Ditching the image.
+2020-12-25 09:36:50,720 INFO Removed file: /home/exp1000/img_msec_1608888994089_2.ims_rgb
+2020-12-25 09:36:50,726 INFO Removed file: /home/exp1000/img_msec_1608888994089_2.png
+2020-12-25 09:36:50,728 INFO Removed file: /home/exp1000/img_msec_1608888994089_2_thumbnail.jpeg
+2020-12-25 09:36:50,729 INFO Removed file: /home/exp1000/img_msec_1608888994089_2_input.jpeg
+2020-12-25 09:36:50,731 INFO Wait 5 seconds...
+2020-12-25 09:36:55,738 INFO Running command to acquire an image: ims100_testapp -R 8 -G 8 -B 8 -c /dev/ttyACM0 -m /dev/sda -v 0 -n 1 -p -e 2 >> /home/exp1000/logs/opssat_smartcam_20201225_093459.log 2>&1
+
+ctrl port        : /dev/ttyACM0
+data port        : /dev/sda
+exposure time    : 2
+number of images : 1
+bw img sensor    : 0
+default conf     : 1
+video duration   : 0
+gain (RGB)       : 8 8 8
+-------------------------
+
+
+BST IMS100 Telemetry:
+    version : 
+    status  : 00
+    temp[°C]: 0
+
+exit success
+2020-12-25 09:37:04,252 INFO Acquired image: /home/exp1000/img_msec_1608889019128_2.png
+2020-12-25 09:37:04,254 INFO Running command to create thumbnail: pngtopam /home/exp1000/img_msec_1608889019128_2.png | pamscale 0.29999999999999999 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608889019128_2_thumbnail.jpeg
+2020-12-25 09:37:06,038 INFO Labeling the image using the 'default' model.
+2020-12-25 09:37:06,040 INFO Running command to create input: pngtopam /home/exp1000/img_msec_1608889019128_2.png | pamscale -xsize 224 -ysize 224 | pnmtojpeg -quality 90 > /home/exp1000/img_msec_1608889019128_2_input.jpeg
+2020-12-25 09:37:07,490 INFO Running command to label the image: /home/exp1000/bin/tensorflow/lite/c/image_classifier /home/exp1000/img_msec_1608889019128_2_input.jpeg /home/exp1000/models/default/model.tflite /home/exp1000/models/default/labels.txt 224 224 0 255
+2020-12-25 09:37:08,464 INFO Model prediction results: {"bad": 0.849295, "earth": 0.065724, "edge": 0.084981}
+2020-12-25 09:37:08,465 INFO Labeling the image as 'bad'.
+2020-12-25 09:37:08,467 INFO Ditching the image.
+2020-12-25 09:37:08,489 INFO Removed file: /home/exp1000/img_msec_1608889019128_2.ims_rgb
+2020-12-25 09:37:08,493 INFO Removed file: /home/exp1000/img_msec_1608889019128_2.png
+2020-12-25 09:37:08,494 INFO Removed file: /home/exp1000/img_msec_1608889019128_2_input.jpeg
+2020-12-25 09:37:08,496 INFO Removed file: /home/exp1000/img_msec_1608889019128_2_thumbnail.jpeg
+2020-12-25 09:37:08,498 INFO Image acquisition loop completed.
+2020-12-25 09:37:08,509 INFO Disk usage:
+Filesystem                Size      Used Available Use% Mounted on
+/dev/root                 3.8G      1.8G      1.8G  51% /
+devtmpfs                492.9M         0    492.9M   0% /dev
+tmpfs                   501.4M         0    501.4M   0% /dev/shm
+tmpfs                   501.4M    348.0K    501.0M   0% /run
+tmpfs                   501.4M         0    501.4M   0% /sys/fs/cgroup
+tmpfs                   501.4M         0    501.4M   0% /var/volatile
+tmpfs                   501.4M    812.0K    500.6M   0% /tmp
+tmpfs                   100.3M         0    100.3M   0% /run/user/0
+
+2020-12-25 09:37:08,519 INFO Tarring 2 file(s) for downlink.
