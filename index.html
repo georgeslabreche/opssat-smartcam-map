@@ -165,13 +165,11 @@
             iconAnchor:   [25, 25], // point of the icon which will correspond to marker's location
         });
 
-
-        // Assign each marker group a layer id.
-        // This is so that we can toggle show/hide markers for selected datetimes.
-        var markerGroupId = 0;
+        // All marker groups.
+        var gMarkerGroupsAll = [];
 
         // Track hidden marker groups.
-        var markerGroupsHidden = [];
+        var gMarkerGroupsHidden = [];
         
         // Get the value for the given URL parameter.
         var getUrlParameter = function getUrlParameter(sParam) {
@@ -189,15 +187,37 @@
             }
         };
 
+        // If a timestamp is given as a URL parameter then make sure that the date select dropdown lists selects that value;
+        const gTimestampUrlParam = getUrlParameter("timestamp");
+
+        // Keep track of the marker group idea associated with the URL parameter timestamp.
+        var gMarkerGroupIdToShow = -1;
+           
+        // Set the date select dropdown list the URL parameter value.
+        if(gTimestampUrlParam != undefined){
+
+            // Get marker group id associated with the timestamp.
+            $('.date-select option').each(function(){
+                if ($(this).data('timestamp') === gTimestampUrlParam) {
+
+                    // The id is the value attribute.
+                    gMarkerGroupIdToShow = $(this).attr('value');
+
+                    // Select date in the dropdown for the given timestamp.
+                    $('.date-select').val(gMarkerGroupIdToShow);
+                }
+            });
+        };
+
         // This function only displays markers for the given marker group id:
         var displayForTimestampGroup = function(markerGroupIdToShow){
             // Re-introduce all marker group previously removed.
-            for(var i=0; i < markerGroupsHidden.length; i++){
-                map.addLayer(markerGroupsHidden[i]);
+            for(var i=0; i < gMarkerGroupsHidden.length; i++){
+                map.addLayer(gMarkerGroupsHidden[i]);
             }
 
             // Reset the array tracking the hidden marker group.
-            markerGroupsHidden = []
+            gMarkerGroupsHidden = []
 
             // If we are not displaying all marker groups.
             if(markerGroupIdToShow != -1){
@@ -206,7 +226,7 @@
                 map.eachLayer(function (layer) { 
                     if(layer instanceof L.LayerGroup && layer.markerGroupId != undefined){
                         if(layer.markerGroupId != markerGroupIdToShow){
-                            markerGroupsHidden.push(layer);
+                            gMarkerGroupsHidden.push(layer);
                             map.removeLayer(layer);  
                         }
                     } 
@@ -220,11 +240,13 @@
         // Make a promise for each experiment start time
         for(var i = 0; i < CAMERA_START_TIMESTAMPS.length; i++){
 
-            // Th experiment start time.
-            var cameraStartTimestamp = CAMERA_START_TIMESTAMPS[i];
+            
 
             // The promise to fetch data for this experiment start time.
             papaParsePromises.push(new Promise((resolve, reject) => {
+
+                // The experiment start time.
+                var cameraStartTimestamp = CAMERA_START_TIMESTAMPS[i];
 
                 // Read CSV file
                 Papa.parse("https://georgeslabreche.github.io/opssat-smartcam-map/data/logs/opssat_smartcam_metadata_" + cameraStartTimestamp + ".csv", {
@@ -277,15 +299,10 @@
 
                         }
 
-                        // Create the marker grour layer and assign it an id.
-                        var markerGroup = L.layerGroup(markers)
-                        markerGroup.markerGroupId = markerGroupId;
-                        markerGroupId++;
+                        // Collect the marker group layers.
+                        // They will be processed for display on the map after all the promises have returned responses.
+                        gMarkerGroupsAll.push({timestamp: cameraStartTimestamp, layer: L.layerGroup(markers)});
 
-                        // Add the group to the map.
-                        markerGroup.addTo(map);
-
-                        // Signal that the promise was kept
                         resolve(cameraStartTimestamp);
                     },
                     error: function(err, file) {
@@ -305,6 +322,34 @@
         allPromises
             .then(success => {
 
+                
+                // Sort marker groups from newest to oldest timestamp in case the promises did not return a response in the same order they were dispatched.
+                gMarkerGroupsAll.sort((a,b) => (a.timestamp < b.timestamp) ? 1 : ((b.timestamp < a.timestamp) ? -1 : 0)); 
+
+                for(var markerGroupId=0; markerGroupId < gMarkerGroupsAll.length; markerGroupId++){
+
+                    // Assign an id for this marker group.
+                    var markerGroup = gMarkerGroupsAll[markerGroupId].layer;
+                    markerGroup.markerGroupId = markerGroupId;
+
+                    // If gMarkerGroupIdToShow is not -1 then a timestamp URL parameter was set.
+                    // Only show the markers for the timestamp indicated by that URL parameter.
+                    if(gMarkerGroupIdToShow != -1){
+                        if(gMarkerGroupIdToShow != markerGroupId){
+                            // Hide the group.
+                            gMarkerGroupsHidden.push(markerGroup);
+                        }else{
+                            // Add the group to the map.
+                            markerGroup.addTo(map);
+                        }
+                    }else{
+                        // Displaying everything.
+                        // Add the group to the map.
+                        markerGroup.addTo(map);
+                    }
+                }
+
+
                 // Only initialize dropdown lists if all data was successfully fetched.
                 $('.map-tile-select').change(function(){
                     // Remove current tile layer.
@@ -319,6 +364,7 @@
                 $('.date-select').change(function(){
                     // The marker group we want to show.
                     var markerGroupIdToShow = $(".date-select option:selected").attr("value");
+                    console.log(markerGroupIdToShow);
 
                     // Fetch selected timestamp to set the URL parameter for sharing friendliness.
                     var selectedTimestamp = $(".date-select option:selected").data("timestamp");
@@ -333,34 +379,10 @@
                     // Only display the markers for the selected experiment start timestamp.
                     displayForTimestampGroup(markerGroupIdToShow);
                 });
-
-                // If there is a timestamp URL parameter then only display markers for that start experiment timestamp.
-                // Fetch timestamp URL parameter, if there is one.
-                var timestampUrlParam = getUrlParameter("timestamp");  
-                // Display data for that timestamp.
-                if(timestampUrlParam != undefined){
-
-                    // Get marker group id associated with the timestamp.
-                    $('.date-select option').each(function(){
-                        if ($(this).data('timestamp') === timestampUrlParam) {
-                            
-                            // The id is the value attribute.
-                            var markerGroupIdToShow = $(this).attr('value');
-
-                            // Select date in the dropdown for the given timestamp.
-                            $('.date-select').val(markerGroupIdToShow);
-
-                            // Display markers for the retrieved marker group id.
-                            displayForTimestampGroup(markerGroupIdToShow);
-                        }
-                    });
-
-                    
-                }
             })
             .catch(error => {
                 var errMsg = 'An error occured while fetching data. Try refreshing.';
-                print(errMsg);
+                alert(errMsg);
                 console.error(errMsg, error);
             });
 
