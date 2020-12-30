@@ -141,7 +141,7 @@
                 var datetimeString = YYYY + "-" + MM + "-" + DD + " " + HH + ":" + mm + ":" + ss;
 
                 // Create select option.
-                selectHtml = selectHtml + '<option value="' + i + ' ">' + datetimeString + '</option>'
+                selectHtml = selectHtml + '<option value="' + i + '" data-timestamp="' + cst + '">' + datetimeString + '</option>'
             }
 
             div.innerHTML = selectHtml + '</select>';
@@ -172,93 +172,25 @@
 
         // Track hidden marker groups.
         var markerGroupsHidden = [];
+        
+        // Get the value for the given URL parameter.
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
 
-        for(var i=0; i < CAMERA_START_TIMESTAMPS.length; i++){
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
 
-            // The camara image acquisitio start time.
-            var cameraStartTimestamp = CAMERA_START_TIMESTAMPS[i]
-
-            // CSV file URL.
-            var dataLogUrl = "https://georgeslabreche.github.io/opssat-smartcam-map/data/logs/opssat_smartcam_metadata_" + cameraStartTimestamp + ".csv";
-
-            // Read CSV file
-            Papa.parse(dataLogUrl, {
-                download: true,
-                header: true,
-                skipEmptyLines: true,
-                complete: function(results) {
-
-                    // Marker array.
-                    var markers = []
-
-                    for(var j=0; j < results.data.length; j++){
-
-                        // Get dat afor the current image.
-                        var imgData = results.data[j];
-
-                        // Was this image kept?
-                        var imgKept = imgData.keep === 'True' ? true : false;
-
-                        // Define marker icon based on whether or not the image was kept.
-                        var markerIcon = imgKept == true ? markerIconGood : markerIconBad;
-
-                        // Create marker and place on map.
-                        var marker = L.marker([imgData.lat, imgData.lng],  {icon: markerIcon, dateGroup: cameraStartTimestamp})
-
-                        // If image was kept then build a marker popup that will show the image.
-                        if(imgKept == true){
-                            var markerHtmlContent = "<div style='width:620px; height:635px'>" +
-                                "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/" + imgData.label + "/" + imgData.filename + "_thumbnail.jpeg'></img>" +
-                                "<div>" + 
-                                    "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
-                                    "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
-                                    "<div><strong>Filename:</strong> " + imgData.filename + "</div>" +
-                                "</div>" +
-                            "</div>"
-
-                            marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
-                        }else{
-                            var markerHtmlContent = "<div style='width:360px; height:35px'>" +
-                                "<div>" + 
-                                    "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
-                                    "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
-                                "</div>" +
-                            "</div>"
-
-                            marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
-                        }
-
-                        markers.push(marker);
-
-                    }
-
-                    // Create the marker grour layer and assign it an id.
-                    var markerGroup = L.layerGroup(markers)
-                    markerGroup.markerGroupId = markerGroupId;
-                    markerGroupId++;
-
-                    // Add the group to the map.
-                    markerGroup.addTo(map);
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
                 }
-            })
-        }
+            }
+        };
 
-        // Show image when clicking on a marker.
-        $('.map-tile-select').change(function(){
-            // Remove current tile layer.
-            map.removeLayer(tileLayers[selectedMapTileLayerIndex]);
-
-            // Add selectred tile layer.
-            selectedMapTileLayerIndex = $(".map-tile-select option:selected").attr("value");
-            map.addLayer(tileLayers[selectedMapTileLayerIndex]);
-        });
-
-
-        // Only show images for selected day
-        $('.date-select').change(function(){
-            // The marker group we want to show.
-            var markerGroupIdToShow = $(".date-select option:selected").attr("value");
-
+        // This function only displays markers for the given marker group id:
+        var displayForTimestampGroup = function(markerGroupIdToShow){
             // Re-introduce all marker group previously removed.
             for(var i=0; i < markerGroupsHidden.length; i++){
                 map.addLayer(markerGroupsHidden[i]);
@@ -273,7 +205,6 @@
                 // Remove the marker groups that we don't want to show.
                 map.eachLayer(function (layer) { 
                     if(layer instanceof L.LayerGroup && layer.markerGroupId != undefined){
-
                         if(layer.markerGroupId != markerGroupIdToShow){
                             markerGroupsHidden.push(layer);
                             map.removeLayer(layer);  
@@ -281,7 +212,160 @@
                     } 
                 });
             }
-        });
+        }
+
+        // Array of promises.
+        var papaParsePromises = [];
+
+        // Make a promise for each experiment start time
+        for(var i = 0; i < CAMERA_START_TIMESTAMPS.length; i++){
+
+            // Th experiment start time.
+            var cameraStartTimestamp = CAMERA_START_TIMESTAMPS[i];
+
+            // The promise to fetch data for this experiment start time.
+            papaParsePromises.push(new Promise((resolve, reject) => {
+
+                // Read CSV file
+                Papa.parse("https://georgeslabreche.github.io/opssat-smartcam-map/data/logs/opssat_smartcam_metadata_" + cameraStartTimestamp + ".csv", {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+
+                        // Marker array.
+                        var markers = []
+
+                        for(var j=0; j < results.data.length; j++){
+
+                            // Get dat afor the current image.
+                            var imgData = results.data[j];
+
+                            // Was this image kept?
+                            var imgKept = imgData.keep === 'True' &&  imgData.label !== 'bad' ? true : false;
+
+                            // Define marker icon based on whether or not the image was kept.
+                            var markerIcon = imgKept == true ? markerIconGood : markerIconBad;
+
+                            // Create marker and place on map.
+                            var marker = L.marker([imgData.lat, imgData.lng],  {icon: markerIcon, dateGroup: cameraStartTimestamp})
+
+                            // If image was kept then build a marker popup that will show the image.
+                            if(imgKept == true){
+                                var markerHtmlContent = "<div style='width:620px; height:635px'>" +
+                                    "<img src='https://georgeslabreche.github.io/opssat-smartcam-map/data/" + imgData.label + "/" + imgData.filename + "_thumbnail.jpeg'></img>" +
+                                    "<div>" + 
+                                        "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
+                                        "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
+                                        "<div><strong>Filename:</strong> " + imgData.filename + "</div>" +
+                                    "</div>" +
+                                "</div>"
+
+                                marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
+                            }else{
+                                var markerHtmlContent = "<div style='width:360px; height:35px'>" +
+                                    "<div>" + 
+                                        "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
+                                        "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
+                                    "</div>" +
+                                "</div>"
+
+                                marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
+                            }
+
+                            markers.push(marker);
+
+                        }
+
+                        // Create the marker grour layer and assign it an id.
+                        var markerGroup = L.layerGroup(markers)
+                        markerGroup.markerGroupId = markerGroupId;
+                        markerGroupId++;
+
+                        // Add the group to the map.
+                        markerGroup.addTo(map);
+
+                        // Signal that the promise was kept
+                        resolve(cameraStartTimestamp);
+                    },
+                    error: function(err, file) {
+
+                        // Log error.
+                        console.error("Failed to fetch data.", err)
+
+                        // Signal that the promise was not kept.
+                        reject(cameraStartTimestamp);
+                    }
+                })
+            }));
+        };
+
+        // Check that all promises were kept.
+        const allPromises = Promise.all(papaParsePromises);
+        allPromises
+            .then(success => {
+
+                // Only initialize dropdown lists if all data was successfully fetched.
+                $('.map-tile-select').change(function(){
+                    // Remove current tile layer.
+                    map.removeLayer(tileLayers[selectedMapTileLayerIndex]);
+
+                    // Add selectred tile layer.
+                    selectedMapTileLayerIndex = $(".map-tile-select option:selected").attr("value");
+                    map.addLayer(tileLayers[selectedMapTileLayerIndex]);
+                });
+
+                // Only show images for selected day
+                $('.date-select').change(function(){
+                    // The marker group we want to show.
+                    var markerGroupIdToShow = $(".date-select option:selected").attr("value");
+
+                    // Fetch selected timestamp to set the URL parameter for sharing friendliness.
+                    var selectedTimestamp = $(".date-select option:selected").data("timestamp");
+
+                    // Set selected timestamp in URL parameter for sharing friendliness.
+                    if(selectedTimestamp != undefined){
+                        history.pushState(null, null, "?timestamp=" + selectedTimestamp);
+                    }else{
+                        history.pushState(null, null, "?");
+                    }
+
+                    // Only display the markers for the selected experiment start timestamp.
+                    displayForTimestampGroup(markerGroupIdToShow);
+                });
+
+                // If there is a timestamp URL parameter then only display markers for that start experiment timestamp.
+                // Fetch timestamp URL parameter, if there is one.
+                var timestampUrlParam = getUrlParameter("timestamp");  
+                // Display data for that timestamp.
+                if(timestampUrlParam != undefined){
+
+                    // Get marker group id associated with the timestamp.
+                    $('.date-select option').each(function(){
+                        if ($(this).data('timestamp') === timestampUrlParam) {
+                            
+                            // The id is the value attribute.
+                            var markerGroupIdToShow = $(this).attr('value');
+
+                            // Select date in the dropdown for the given timestamp.
+                            $('.date-select').val(markerGroupIdToShow);
+
+                            // Display markers for the retrieved marker group id.
+                            displayForTimestampGroup(markerGroupIdToShow);
+                        }
+                    });
+
+                    
+                }
+            })
+            .catch(error => {
+                var errMsg = 'An error occured while fetching data. Try refreshing.';
+                print(errMsg);
+                console.error(errMsg, error);
+            });
+
+        // Show image when clicking on a marker.
+
 
     </script>
 </body>
