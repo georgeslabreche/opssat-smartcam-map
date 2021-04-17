@@ -267,8 +267,11 @@
                             // The image URL.
                             var imgUrl = "data/" + imgData.label + "/" + imgData.filename + "_thumbnail.jpeg";
 
-                            // Check if thumbnail image file exists (only if loading the page online).
-                            if(location.hostname !== "")
+                            // Was this image kept?
+                            var imgKept = imgData.keep === 'True' &&  imgData.label !== 'bad' ? true : false;
+
+                            // Check if kept thumbnail image file exists (only if loading the page online).
+                            if(imgKept == true && location.hostname !== "")
                             {
                                 // FIXME: We only do the check online because the following http request will throw a CORS error when ran locally.
                                 var http = new XMLHttpRequest();
@@ -290,8 +293,7 @@
                                 // The thumbnail image file exists at the given url.
                                 // Create a marker for it.
 
-                                // Was this image kept?
-                                var imgKept = imgData.keep === 'True' &&  imgData.label !== 'bad' ? true : false;
+                               
 
                                 // Define marker icon based on whether or not the image was kept.
                                 var markerIcon = imgKept == true ? markerIconGood : markerIconBad;
