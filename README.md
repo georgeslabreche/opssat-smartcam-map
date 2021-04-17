@@ -1,2 +1,10 @@
 # OPS-SAT SmartCam Map
 Mapping the groundtrack location of the spacecraft when images were acquired.
+
+## Adding new thumbnails
+1. Upload the thumbnails image files as well as the .csv and .log files to their dedicated folders inside the `data` directory.
+2. Update the `CAMERA_START_TIMESTAMPS` array in **index.js** to contain the timestamp of the .csv filename that contains the metadata of the thumbnails to be added.
+
+Note that the .log files are not used in any way. They are just included for record-keeping.
+## Running locally
+The map can be loaded locally without uploading the thumbnails to the repository's `data` directory. However, the .csv metadata files still need to be uploaded. This is a known issue: [Issue \#1](https://github.com/georgeslabreche/opssat-smartcam-map/issues/1).

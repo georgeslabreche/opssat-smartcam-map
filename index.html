@@ -7,44 +7,26 @@
     <!-- JAVASCRIPT -->
 
     <!-- jQuery -->
-    <script
-        src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="
-        crossorigin="anonymous">
+    <script src="libs/jQuery/jquery-3.5.1.min.js">
     </script>
 
-    <!-- jQuery Migrate -->
-    <!--script
-        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-migrate/3.3.2/jquery-migrate.min.js"
-        integrity="sha512-3fMsI1vtU2e/tVxZORSEeuMhXnT9By80xlmXlsOku7hNwZSHJjwcOBpmy+uu+fyWwGCLkMvdVbHkeoXdAzBv+w=="
-        crossorigin="anonymous">
-    </script-->
-
     <!-- PapaParse -->
-    <script 
-        src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js" 
-        integrity="sha512-rKFvwjvE4liWPlFnvH4ZhRDfNZ9FOpdkD/BU5gAIA3VS3vOQrQ5BjKgbO3kxebKhHdHcNUHLqxQYSoxee9UwgA=="
-        crossorigin="anonymous">
+    <script src="libs/PapaParse/papaparse.min.js">
     </script>
 
     <!-- Leaflet -->
-    <script 
-        src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-        crossorigin="">
+    <script src="libs/leaflet/leaflet.js">
     </script>
 
     <!-- okzoom -->
-    <script src="libs/okzoom/okzoom.min.js"></script>
+    <script src="libs/okzoom/okzoom.min.js">
+    </script>
 
     <!-- CSS -->
 
     <!-- Leaflet -->
-    <link 
-        rel="stylesheet" 
-        href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-        crossorigin=""/>
+    <link rel="stylesheet" 
+          href="libs/leaflet/leaflet.css" />
 
     <style>
         body {
@@ -58,6 +40,7 @@
     </style>
 </head>
 <body>
+    <!-- If running locally the .csv log files still need to be uploaded on the GitHub repo. -->
     <div id="map"></div>
 
     <script>
@@ -255,8 +238,6 @@
         // Make a promise for each experiment start time
         for(var i = 0; i < CAMERA_START_TIMESTAMPS.length; i++){
 
-            
-
             // The promise to fetch data for this experiment start time.
             papaParsePromises.push(new Promise((resolve, reject) => {
 
@@ -264,6 +245,7 @@
                 var cameraStartTimestamp = CAMERA_START_TIMESTAMPS[i];
 
                 // Read CSV file
+                // FIXME: Is there a way to also make this work locally?
                 Papa.parse("https://georgeslabreche.github.io/opssat-smartcam-map/data/logs/opssat_smartcam_metadata_" + cameraStartTimestamp + ".csv", {
                     download: true,
                     header: true,
@@ -275,7 +257,7 @@
 
                         for(var j=0; j < results.data.length; j++){
 
-                            // Get dat afor the current image.
+                            // Get data for the current image.
                             var imgData = results.data[j];
 
                             // Was this image kept?
@@ -291,7 +273,7 @@
                             if(imgKept == true){
 
                                 // The image URL.
-                                var imgUrl = "https://georgeslabreche.github.io/opssat-smartcam-map/data/" + imgData.label + "/" + imgData.filename + "_thumbnail.jpeg";
+                                var imgUrl = "data/" + imgData.label + "/" + imgData.filename + "_thumbnail.jpeg";
 
                                 // The marker popup HTML content.
                                 var markerHtmlContent = "<div style='width:330px; height:320px'>" +
