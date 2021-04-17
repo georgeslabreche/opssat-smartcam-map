@@ -257,48 +257,75 @@
 
                         for(var j=0; j < results.data.length; j++){
 
+                            // It could be that some csv files exist online while the thubmnails are only present in a local file system.
+                            // When the map is loaded online, check if the image file is online before creating a marker for it.
+                            var createMarker = true;
+
                             // Get data for the current image.
                             var imgData = results.data[j];
 
-                            // Was this image kept?
-                            var imgKept = imgData.keep === 'True' &&  imgData.label !== 'bad' ? true : false;
+                            // The image URL.
+                            var imgUrl = "data/" + imgData.label + "/" + imgData.filename + "_thumbnail.jpeg";
 
-                            // Define marker icon based on whether or not the image was kept.
-                            var markerIcon = imgKept == true ? markerIconGood : markerIconBad;
+                            // Check if thumbnail image file exists (only if loading the page online).
+                            if(location.hostname !== "")
+                            {
+                                // FIXME: We only do the check online because the following http request will throw a CORS error when ran locally.
+                                var http = new XMLHttpRequest();
+                                http.open('HEAD', imgUrl, false);
+                                http.send();
 
-                            // Create marker and place on map.
-                            var marker = L.marker([imgData.lat, imgData.lng],  {icon: markerIcon, dateGroup: cameraStartTimestamp})
+                                // The thumbnail image file doesn't exist at the given url.
+                                if(http.status == 404)
+                                {
+                                    // Don't create a marker for it.
+                                    createMarker = false;
 
-                            // If image was kept then build a marker popup that will show the image.
-                            if(imgKept == true){
+                                    // Log this as a warning.
+                                    console.warn("Thumbnail image file doesn't exist: " + imgUrl)
+                                }
+                            }
 
-                                // The image URL.
-                                var imgUrl = "data/" + imgData.label + "/" + imgData.filename + "_thumbnail.jpeg";
+                            if(createMarker == true){
+                                // The thumbnail image file exists at the given url.
+                                // Create a marker for it.
 
-                                // The marker popup HTML content.
-                                var markerHtmlContent = "<div style='width:330px; height:320px'>" +
-                                "<img class='okzoom' style='width: 325px;' src='" + imgUrl + "'/>" +
-                                "</div>" +
-                                "<div>" + 
-                                    "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
-                                    "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
-                                    "<div><strong>Filename:</strong> " + imgData.filename + "</div>" +
-                                "</div>";
+                                // Was this image kept?
+                                var imgKept = imgData.keep === 'True' &&  imgData.label !== 'bad' ? true : false;
 
-                                marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
-                            }else{
-                                var markerHtmlContent = "<div style='width:360px; height:35px'>" +
+                                // Define marker icon based on whether or not the image was kept.
+                                var markerIcon = imgKept == true ? markerIconGood : markerIconBad;
+
+                                // Create marker and place on map.
+                                var marker = L.marker([imgData.lat, imgData.lng],  {icon: markerIcon, dateGroup: cameraStartTimestamp})
+
+                                // If image was kept then build a marker popup that will show the image.
+                                if(imgKept == true){
+
+                                    // The marker popup HTML content.
+                                    var markerHtmlContent = "<div style='width:330px; height:320px'>" +
+                                    "<img class='okzoom' style='width: 325px;' src='" + imgUrl + "'/>" +
+                                    "</div>" +
                                     "<div>" + 
                                         "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
                                         "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
-                                    "</div>" +
-                                "</div>"
+                                        "<div><strong>Filename:</strong> " + imgData.filename + "</div>" +
+                                    "</div>";
 
-                                marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
+                                    marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
+                                }else{
+                                    var markerHtmlContent = "<div style='width:360px; height:35px'>" +
+                                        "<div>" + 
+                                            "<div><strong>Timestamp:</strong> " + imgData.acq_dt + " (UTC)</div>" +
+                                            "<div><strong>Coordinates:</strong> " + imgData.lat + ", " + imgData.lng + "</div>" +
+                                        "</div>" +
+                                    "</div>"
+
+                                    marker.bindPopup(markerHtmlContent, {maxWidth: "auto"});
+                                }
+
+                                markers.push(marker);
                             }
-
-                            markers.push(marker);
-
                         }
 
                         // Collect the marker group layers.
