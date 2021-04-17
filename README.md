@@ -1,5 +1,5 @@
 # OPS-SAT SmartCam Map
-Mapping the groundtrack location of the spacecraft when images were acquired.
+Mapping the groundtrack locations of the spacecraft when images were acquired. The map is hosted as a GitHub Page, [here](https://georgeslabreche.github.io/opssat-smartcam-map/).
 
 ## Adding new thumbnails
 1. Upload the thumbnails image files as well as the .csv and .log files to their dedicated folders inside the `data` directory.
