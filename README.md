@@ -3,7 +3,7 @@ Mapping the groundtrack locations of the spacecraft when images were acquired. T
 
 ## Adding new thumbnails
 1. Upload the thumbnails image files as well as the .csv and .log files to their dedicated folders inside the `data` directory.
-2. Update the `CAMERA_START_TIMESTAMPS` array in **index.js** to contain the timestamp of the .csv filename that contains the metadata of the thumbnails to be added.
+2. Update the `CAMERA_START_TIMESTAMPS` array in **index.html** to contain the timestamp of the .csv filenames that contain the metadata of the thumbnails to be added.
 
 Note that the .log files are not used in any way. They are just included for record-keeping.
 ## Running locally
