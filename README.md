@@ -1,5 +1,5 @@
 # OPS-SAT SmartCam Map
-Mapping the groundtrack locations of the [OPS-SAT spacecraft](https://opssat1.esoc.esa.int/) when images were acquired. The map is hosted as a GitHub Page, [here](https://georgeslabreche.github.io/opssat-smartcam-map/). All OPS-SAT images were acquired by the spacecraft's [SmartCam](https://github.com/georgeslabreche/opssat-smartcam) and credited to ESA.
+Mapping the groundtrack locations of the [OPS-SAT spacecraft](https://opssat1.esoc.esa.int/) when images were acquired. Development has ceased in this repo and moved to the mission's GitLab account. The map is now hosted as a European Space Agency's GitLab Page, [here](https://ops-sat.io.esa.int/smartcam-map/). All OPS-SAT images were acquired by the spacecraft's [SmartCam](https://github.com/georgeslabreche/opssat-smartcam) and credited to ESA.
 
 ## Adding new thumbnails
 1. Upload the thumbnails image files as well as the .csv and .log files to their dedicated folders inside the `data` directory.
